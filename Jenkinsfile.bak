@@ -1,0 +1,56 @@
+pipeline{
+	agent any 
+	environment{
+		DOCKER_TAG = getDockerTag() 
+	}
+	stages{
+		stage('Build docker image'){
+			steps{
+				sh "docker build . -t 74744556/webapp:${DOCKER_TAG}"
+			}
+		}
+		stage('DockerHub Push'){
+			steps{
+                                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'dockerhub-pwd', usernameVariable: 'dockerhub-id')]) {
+                                      sh "docker login -u ${dockerhub-id} -p ${dockerhub-pwd}"
+                                      sh "docker push ${dockerhub-id}/webapp:${DOCKER_TAG}"
+                                   }
+			}
+		}
+		stage('Deploy on kubernetes DEV env'){
+			environment{
+				STACK = "dev"	 
+			}
+			steps{
+				sshagent(['kubehost']) {
+					sh "ssh vagrant@172.42.42.100 rm -rf helm"
+    				sh "scp -o StrictHostKeyChecking=no -rv helm vagrant@172.42.42.100:/home/vagrant/" 
+    				sh "ssh vagrant@172.42.42.100 'helm upgrade --install webapp ./helm/ -f helm/values-${STACK}.yaml -n ${STACK} --set=webapp1.tag=${DOCKER_TAG}'"
+					}
+			}
+		}
+		stage('Manual approval for UAT'){
+			steps{
+				input "Deploy to UAT?"
+			}
+		}
+		stage('Deploy on kubernetes UAT env'){
+			environment{
+				STACK = "uat"	 
+			}
+			steps{
+				sshagent(['kubehost']) {
+					sh "ssh vagrant@172.42.42.100 rm -rf helm"
+    				sh "scp -o StrictHostKeyChecking=no -rv helm vagrant@172.42.42.100:/home/vagrant/" 
+    				sh "ssh vagrant@172.42.42.100 'helm upgrade --install webapp ./helm/ -f helm/values-${STACK}.yaml -n ${STACK} --set=webapp1.tag=${DOCKER_TAG}'"
+					}
+			}
+		}
+	}
+
+}
+
+def getDockerTag(){
+	def tag = sh script: "git rev-parse HEAD", returnStdout: true
+	return tag
+}
