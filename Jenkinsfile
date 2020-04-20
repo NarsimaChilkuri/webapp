@@ -2,65 +2,48 @@ pipeline{
 	agent any 
 	environment{
 		            WEB_APP1_TAG = getWebApp1DockerTag()
-                WEB_APP2_TAG = getWebApp2DockerTag() 
+                            WEB_APP2_TAG = getWebApp2DockerTag() 
 	}
 	stages{
-		            stage('Build docker image'){
-			               steps{
-				                     sh "docker build . -t 74744556/webapp1:${WEB_APP1_TAG}"
-                             sh "docker build . -t 74744556/webapp2:${WEB_APP2_TAG}"
-			               }
-		            }
-		            stage('DockerHub Push'){
-			               steps{
-                                withCredentials([usernamePassword(credentialsId: 'dockerhub1', passwordVariable: 'dockerpass', usernameVariable: 'dockeruser')]) {
-                                      sh "docker login -u ${dockeruser} -p ${dockerpass}"
-                                      sh "docker push ${dockeruser}/webapp1:${WEB_APP1_TAG}"
-                                      sh "docker push ${dockeruser}/webapp1:${WEB_APP2_TAG}"
-                                }
-			               }
-		            }           
-
-
-
-                stage('Deploy on kubernetes DEV env'){
-                     environment{
-                                  STACK = "dev"  
-                     }
-                     steps{     
-                            deployHelmChart(STACK)
-                     }
-                }
+                            stage('Deploy on kubernetes DEV env'){
+                                 environment{
+                                              STACK = "dev"  
+                                 }
+                                 steps{     
+                                       deployHelmChart(STACK)
+                                 }
+                            }
                 
                 
-                stage('Manual approval for UAT'){
-                      steps{
-                             input "Deploy to UAT?"
-                        }
-                }
+                            stage('Manual approval for UAT'){
+                                 steps{
+                                       input "Deploy to UAT?"
+                                 }
+                            }
 
 		            stage('Deploy on kubernetes UAT env'){
 		                 environment{
-				                          STACK = "uat"	 
-			               }
-			               steps{     
-                            deployHelmChart(STACK)
-			               }
+				              STACK = "uat"	 
+			         }
+			         steps{     
+                                       deployHelmChart(STACK)
+			         }
 		            }
                 
-                stage('Manual approval for PROD'){
-                      steps{
-                             input "Deploy to PROD?"
-                        }
-                }
-                stage('Deploy on kubernetes PROD env'){
-                      environment{
-                                   STACK = "prod"
-                      }
-                      steps{  
-                             deployHelmChart(STACK)  
-                      }
-                }
+                            stage('Manual approval for PROD'){
+                                 steps{
+                                      input "Deploy to PROD?"
+                                 }
+                            }
+
+                            stage('Deploy on kubernetes PROD env'){
+                                 environment{
+                                              STACK = "prod"
+                                 }
+                                 steps{  
+                                      deployHelmChart(STACK)  
+                                 }
+                            }
 
 
 	}
