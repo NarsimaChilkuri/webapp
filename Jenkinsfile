@@ -2,7 +2,7 @@ pipeline{
 	agent any 
 	environment{
 		WEB_APP1_TAG = getWebApp1DockerTag()
-    WEB_APP2_TAG = getWebApp2DockerTag() 
+                WEB_APP2_TAG = getWebApp2DockerTag() 
 	}
 	stages{
 		            stage('Build docker image'){
@@ -73,8 +73,8 @@ def getWebApp1DockerTag(){
 }
 
 def getWebApp2DockerTag(){
-  def tag = sh script: "git rev-parse webapp-2", returnStdout: true
-  return tag
+        def tag = sh script: "git rev-parse webapp-2", returnStdout: true
+        return tag
 }
 
 def deployHelmChart(String env){
