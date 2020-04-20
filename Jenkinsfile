@@ -27,6 +27,6 @@ pipeline{
 
 
 def getWebApp2DockerTag(){
-    def tag = sh script: "git rev-parse webapp-2", returnStdout: true 
+    def tag = sh script: "git rev-parse origin/webapp-2", returnStdout: true 
     return tag
 }
