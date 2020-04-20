@@ -12,9 +12,9 @@ pipeline{
 		            stage('DockerHub Push'){
 			               steps{
                                 withCredentials([usernamePassword(credentialsId: 'dockerhub1', passwordVariable: 'dockerpass', usernameVariable: 'dockeruser')]) {
-                                      sh "docker login -u ${dockeruser} -p ${dockerpass}"
-                                      sh "docker push ${dockeruser}/webapp1:${WEB_APP1_TAG}"
-                                }
+                                                 sh "docker login -u ${dockeruser} -p ${dockerpass}"
+                                                 sh "docker push ${dockeruser}/webapp1:${WEB_APP1_TAG}"
+                                           }
 			               }
 		            }           
 
@@ -22,8 +22,7 @@ pipeline{
 
         }
 
-
-	}
+}
 
 
 
