@@ -1,0 +1,27 @@
+stack: dev
+
+webapp1:
+  containerName: webapp1
+  repository: 74744556/webapp1
+  tag: 1.0
+  pullPolicy: IfNotPresent
+  replicaCount: 1
+  service:
+    port: 80
+ 
+
+webapp2:
+  containerName: webapp2
+  repository: 74744556/webapp2
+  tag: 1.0
+  pullPolicy: IfNotPresent
+  replicaCount: 1
+  service:
+    port: 80
+ 
+ingress:
+  name: web-ingress
+  host: webapp
+  paths:
+    webapp1: /one
+    webapp2: /two

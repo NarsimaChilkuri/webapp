@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "webapp.fullname" . }}{{ .Values.webapp1.containerName}}
+  namespace: {{ .Values.stack }}
+  labels:
+    component: {{ template "webapp.fullname" . }}
+spec:
+  replicas: {{ .Values.webapp1.replicaCount }}
+  selector:
+    matchLabels:
+      component: {{ template "webapp.fullname" . }}
+  template:
+    metadata:
+      labels:
+        component: {{ template "webapp.fullname" . }}
+    spec:
+      containers:
+      - name: {{ .Values.webapp1.containerName }}
+        image: {{ .Values.webapp1.repository }}:{{ .Values.webapp1.tag }}
+        env:
+        - name: Stack
+          value: {{ .Values.stack }}
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "webapp.fullname" . }}{{ .Values.webapp1.containerName}}
+  namespace: {{ .Values.stack }}
+spec:
+  ports:
+   - port: {{ .Values.webapp1.service.port }}
+  selector:
+    component: {{ template "webapp.fullname" . }}
