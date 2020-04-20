@@ -67,7 +67,9 @@ def deployHelmChart(String env){
                                   sh "ssh vagrant@172.42.42.100 rm -rf helm-charts"
                                   sh "ssh vagrant@172.42.42.100 mkdir helm-charts"
                                   sh "scp -o StrictHostKeyChecking=no -rv /home/narsimac/jenkins/webapps/webapp-chart  vagrant@172.42.42.100:/home/vagrant/helm-charts/webapp-chart"
-                                  sh "ssh vagrant@172.42.42.100 'helm upgrade --install webapp helm-charts/webapp-chart/. -f helm-charts/webapp-chart/values-${env}.yaml -n ${env} --set=webapp1.tag=${WEB_APP1_TAG} --set=webapp2.tag=${WEB_APP2_TAG}'"
+                                  sh "ssh vagrant@172.42.42.100 'helm upgrade --install webapp helm-charts/webapp-chart/. -f helm-charts/webapp-chart/values-${env}.yaml -n ${env} --set=webapp1.tag=${WEB_APP1_TAG}'"
+                                  
+                                  sh "ssh vagrant@172.42.42.100 'helm upgrade --install webapp helm-charts/webapp-chart/. -f helm-charts/webapp-chart/values-${env}.yaml -n ${env} --set=webapp2.tag=${WEB_APP2_TAG}'"
    }
 
 }
