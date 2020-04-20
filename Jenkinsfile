@@ -1,14 +1,14 @@
 pipeline{
 	agent any 
 	environment{
-		WEB_APP1_TAG = getWebApp1DockerTag()
+		            WEB_APP1_TAG = getWebApp1DockerTag()
                 WEB_APP2_TAG = getWebApp2DockerTag() 
 	}
 	stages{
 		            stage('Build docker image'){
 			               steps{
 				                     sh "docker build . -t 74744556/webapp1:${WEB_APP1_TAG}"
-                             sh "docker build . -t 74744556/webapp2:${WEB_APP2_TAG}"
+                            sh "docker build . -t 74744556/webapp2:${WEB_APP2_TAG}"
 			               }
 		            }
 		            stage('DockerHub Push'){
@@ -68,13 +68,13 @@ pipeline{
 }
 
 def getWebApp1DockerTag(){
-	def tag = sh script: "git rev-parse webapp-1", returnStdout: true
-	return tag
+	  def tag = sh script: "git rev-parse webapp-1", returnStdout: true
+	  return tag
 }
 
 def getWebApp2DockerTag(){
-        def tag = sh script: "git rev-parse webapp-2", returnStdout: true
-        return tag
+    def tag = sh script: "git rev-parse webapp-2", returnStdout: true
+    return tag
 }
 
 def deployHelmChart(String env){
